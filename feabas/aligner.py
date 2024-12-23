@@ -572,7 +572,10 @@ class Stack:
 
     @property
     def locked_array(self):
-        return np.array([self.lock_flags[s] for s in self.section_list], copy=False)
+        if np.__version__ < '2.0.0':
+            return np.array([self.lock_flags[s] for s in self.section_list], copy=False)
+        else:
+            return np.array([self.lock_flags[s] for s in self.section_list], copy=None)
 
 
   ## -------------------------------- queries ------------------------------ ##

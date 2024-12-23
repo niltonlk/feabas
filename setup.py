@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import platform
 
-VERSION = '2.1.0'
+VERSION = '2.1.1'
 
 def readme():
     with open('README.md') as f:
@@ -11,7 +11,7 @@ install_requires = [
     'dill',
     'google-cloud-storage',
     'h5py',
-    'numpy<2',
+    'numpy>2',
     'opencv-python',
     'psutil',
     'pyyaml',

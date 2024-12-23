@@ -111,7 +111,10 @@ def config_cache(gear):
                 cache = self._default_cache[cgear]
             masked_operation = False
             if ('tri_mask' in kwargs) and (kwargs['tri_mask'] is not None):
-                tri_mask = np.array(kwargs['tri_mask'], copy=False)
+                if np.__version__ < '2.0.0':
+                    tri_mask = np.array(kwargs['tri_mask'], copy=False)
+                else:
+                    tri_mask = np.array(kwargs['tri_mask'], copy=None)
                 if tri_mask.dtype == bool:
                     if not np.all(tri_mask):
                         masked_operation = True
@@ -124,7 +127,10 @@ def config_cache(gear):
                         if not np.all(tri_mask0):
                             masked_operation = True
             if (not masked_operation) and (kwargs.get('vtx_mask', None) is not None):
-                vtx_mask = np.array(vtx_mask, copy=False)
+                if np.__version__ < '2.0.0':
+                    vtx_mask = np.array(vtx_mask, copy=False)
+                else:
+                    vtx_mask = np.array(vtx_mask, copy=None)
                 if vtx_mask.dtype == bool:
                     if not np.all(vtx_mask):
                         masked_operation = True
@@ -453,12 +459,21 @@ class Mesh:
         xmin, ymin, xmax, ymax = bbox
         ht = ymax - ymin
         wd = xmax - xmin
-        if np.array(bd_width, copy=False).size > 1:
-            bd_width_x = bd_width[0]
-            bd_width_y = bd_width[1]
+        if np.__version__ < '2.0.0':
+            if np.array(bd_width, copy=False).size > 1:
+                bd_width_x = bd_width[0]
+                bd_width_y = bd_width[1]
+            else:
+                bd_width_x = bd_width
+                bd_width_y = bd_width
         else:
-            bd_width_x = bd_width
-            bd_width_y = bd_width
+            if np.array(bd_width, copy=None).size > 1:
+                bd_width_x = bd_width[0]
+                bd_width_y = bd_width[1]
+            else:
+                bd_width_x = bd_width
+                bd_width_y = bd_width
+            
         if bd_width_x < 1:
             bd_width_x = bd_width_x * wd
         if bd_width_y < 1:
@@ -2020,7 +2035,10 @@ class Mesh:
 
 
     def apply_translation(self, dxy, gear, vtx_mask=None):
-        dxy = np.array(dxy, copy=False).reshape(1,2)
+        if np.__version__ < '2.0.0':
+            dxy = np.array(dxy, copy=False).reshape(1,2)
+        else:
+            dxy = np.array(dxy, copy=None).reshape(1,2)
         if self.locked:
             return
         if not np.any(dxy, axis=None):
@@ -2041,7 +2059,10 @@ class Mesh:
         if gear[0] == gear[-1]:
             self.apply_translation(dxy, gear[0], vtx_mask=vtx_mask)
             return
-        dxy = np.array(dxy, copy=False).reshape(1,2)
+        if np.__version__ < '2.0.0':
+            dxy = np.array(dxy, copy=False).reshape(1,2)
+        else:
+            dxy = np.array(dxy, copy=False).reshape(1,2)
         v0 = self.vertices(gear=gear[0])
         offset0 = self.offset(gear=gear[0])
         if Mesh._masked_all(vtx_mask):

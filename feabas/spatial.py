@@ -74,7 +74,10 @@ def scale_coordinates(coordinates, scale):
     scale coordinates, at the same time align the center of the top-left corner
     pixel to (0, 0).
     """
-    coordinates = np.array(coordinates, copy=False)
+    if np.__version__ < '2.0.0':
+        coordinates = np.array(coordinates, copy=False)
+    else:
+        coordinates = np.array(coordinates, copy=None)
     if np.all(scale == 1):
         return coordinates
     else:
@@ -185,7 +188,10 @@ def images_to_polygons(imgs, labels, offset=(0, 0), scale=1.0, upsample=2):
             tile = imgs.crop(bbox, return_empty=False)
             if tile is None:
                 continue
-            xy0 = np.array(bbox[:2], copy=False) + np.array(offset)
+            if np.__version__ < '2.0.0':
+                xy0 = np.array(bbox[:2], copy=False) + np.array(offset)
+            else:
+                xy0 = np.array(bbox[:2], copy=None) + np.array(offset)
             for name, lbl in labels.items():
                 if lbl is None:
                     continue
@@ -205,7 +211,7 @@ def images_to_polygons(imgs, labels, offset=(0, 0), scale=1.0, upsample=2):
                 polygons[name] = p_lbl
     else:
         if isinstance(imgs, str): # input is a file path
-            tile = common.imread(imgs, flag=cv2.IMREAD_UNCHANGED)
+            tile = common.imread(imgs, flag=cv2.IMREAD_GRAYSCALE)
         elif isinstance(imgs, np.ndarray):
             tile = imgs
         else:

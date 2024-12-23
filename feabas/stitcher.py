@@ -254,7 +254,10 @@ class Stitcher:
         sizes.
         """
         if groupings is not None:
-            groupings = np.array(groupings, copy=False)
+            if np.__version__ < '2.0.0':
+                groupings = np.array(groupings, copy=False)
+            else:
+                groupings = np.array(groupings, copy=None)
             assert len(groupings) == len(self.imgrelpaths)
             tile_ht = self.tile_sizes[:,0]
             tile_wd = self.tile_sizes[:,1]
@@ -542,7 +545,10 @@ class Stitcher:
         else:
             # determine the mesh size based on the deformation during mathcing.
             err_contant = 5
-            mesh_sizes = np.array(mesh_sizes, copy=False)
+            if np.__version__ < '2.0.0':
+                mesh_sizes = np.array(mesh_sizes, copy=False)
+            else:
+                mesh_sizes = np.array(mesh_sizes, copy=None)
             mx_meshsz = np.max(mesh_sizes)
             lower_strain = 0.5 * err_contant / mx_meshsz
             strain_list = list(self.match_strains.items())
@@ -925,7 +931,10 @@ class Stitcher:
             for m in self.meshes:
                 R = m.estimate_affine(gear=gear, svd_clip=(1,1))
                 rotations.append(np.arctan2(R[0,1], R[0,0]))
-            rotations = np.array(rotations, copy=False)
+            if np.__version__ < '2.0.0':
+                rotations = np.array(rotations, copy=False)
+            else:
+                rotations = np.array(rotations, copy=None)
             L_ss, N_ss = self._optimizer.connected_subsystems
             theta = {}
             for lbl in range(N_ss):

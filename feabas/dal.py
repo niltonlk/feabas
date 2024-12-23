@@ -411,7 +411,7 @@ class AbstractImageLoader(ABC):
         elif (number_of_channels == 1) and np.dtype(dtype) == np.uint8:
             img = common.imread(imgpath, flag=cv2.IMREAD_GRAYSCALE)
         else:
-            img = common.imread(imgpath, flag=cv2.IMREAD_UNCHANGED)
+            img = common.imread(imgpath, flag=cv2.IMREAD_GRAYSCALE)
         self._read_counter += 1
         if img is None:
             raise RuntimeError(f'Image file {imgpath} not valid!')
@@ -852,7 +852,7 @@ class MosaicLoader(StaticImageLoader):
             else:
                 imgpaths = [imgpaths]
         if tile_size is None:
-            img = common.imread(imgpaths[0], flag=cv2.IMREAD_UNCHANGED)
+            img = common.imread(imgpaths[0], flag=cv2.IMREAD_GRAYSCALE)
             imght, imgwd = img.shape[0], img.shape[1]
             tile_size = (imght, imgwd)
         bboxes = []
@@ -1000,7 +1000,7 @@ class StreamLoader(AbstractImageLoader):
 
     @classmethod
     def from_filepath(cls, imgpath, **kwargs):
-        img = common.imread(imgpath, flag=cv2.IMREAD_UNCHANGED)
+        img = common.imread(imgpath, flag=cv2.IMREAD_GRAYSCALE)
         return cls(img, **kwargs)
 
 

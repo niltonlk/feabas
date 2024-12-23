@@ -14,7 +14,7 @@ Match = namedtuple('Match', ('xy0', 'xy1', 'weight'))
 
 
 def imread(path, **kwargs):
-    flag = kwargs.get('flag', cv2.IMREAD_UNCHANGED)
+    flag = kwargs.get('flag', cv2.IMREAD_GRAYSCALE)
     if path.startswith('gs://') or path.startswith('s3://') or path.startswith('http://') or path.startswith('https://'):
         if path.lower().endswith('.png'):
             driver = 'png'
@@ -520,13 +520,19 @@ def expand_image(img, target_size, slices, fillval=0):
 
 
 def bbox_centers(bboxes):
-    bboxes = np.array(bboxes, copy=False)
+    if np.__version__ < '2.0.0':
+        bboxes = np.array(bboxes, copy=False)
+    else:
+        bboxes = np.array(bboxes, copy=None)
     cntr = 0.5 * bboxes @ np.array([[1,0],[0,1],[1,0],[0,1]]) - 0.5
     return cntr
 
 
 def bbox_sizes(bboxes):
-    bboxes = np.array(bboxes, copy=False)
+    if np.__version__ < '2.0.0':
+        bboxes = np.array(bboxes, copy=False)
+    else:
+        bboxes = np.array(bboxes, copy=None)
     szs = bboxes @ np.array([[0,-1],[-1,0],[0,1],[1,0]])
     return szs.clip(0, None)
 
@@ -540,7 +546,10 @@ def bbox_intersections(bboxes0, bboxes1):
 
 
 def bbox_union(bboxes):
-    bboxes = np.array(bboxes, copy=False)
+    if np.__version__ < '2.0.0':
+        bboxes = np.array(bboxes, copy=False)
+    else:
+        bboxes = np.array(bboxes, copy=None)
     bboxes = bboxes.reshape(-1, 4)
     xy_min = bboxes[:,:2].min(axis=0)
     xy_max = bboxes[:,-2:].max(axis=0)
@@ -548,7 +557,10 @@ def bbox_union(bboxes):
 
 
 def bbox_enlarge(bboxes, margin=0):
-    return np.array(bboxes, copy=False) + np.array([-margin, -margin, margin, margin])
+    if np.__version__ < '2.0.0':
+        return np.array(bboxes, copy=False) + np.array([-margin, -margin, margin, margin])
+    else:
+        return np.array(bboxes, copy=None) + np.array([-margin, -margin, margin, margin])
 
 
 def parse_coordinate_files(filename, **kwargs):

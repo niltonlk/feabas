@@ -215,7 +215,10 @@ def stitching_matcher(img0, img1, **kwargs):
             Nsp = max(1, round(np.log(smx/smn)/np.log(4)))
             spacings = np.exp(np.linspace(np.log(smn), np.log(smx), num=Nsp, endpoint=True))
     else:
-        spacings = np.array(spacings, copy=False)
+        if np.__version__ < '2.0.0':
+            spacings = np.array(spacings, copy=False)
+        else:
+            spacings = np.array(spacings, copy=None)
     if coarse_downsample != 1:
         img0_g = cv2.resize(img0, None, fx=coarse_downsample, fy=coarse_downsample, interpolation=cv2.INTER_AREA)
         img1_g = cv2.resize(img1, None, fx=coarse_downsample, fy=coarse_downsample, interpolation=cv2.INTER_AREA)
@@ -438,7 +441,10 @@ def iterative_xcorr_matcher_w_mesh(mesh0, mesh1, image_loader0, image_loader1, s
     else:
         loader_dict1 = image_loader1
     # if any spacing value smaller than 1, means they are relative to longer side
-    spacings = np.array(spacings, copy=False)
+    if np.__version__ < '2.0.0':
+        spacings = np.array(spacings, copy=False)
+    else:
+        spacings = np.array(spacings, copy=None)
     linear_system = mesh0.is_linear and mesh1.is_linear
     min_block_size_multiplier = 4
     strain = 0.0

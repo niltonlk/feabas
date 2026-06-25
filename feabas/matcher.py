@@ -276,6 +276,7 @@ def stitching_matcher(img0, img1, **kwargs):
         conf_thresh=conf_thresh)
     if conf0 < conf_thresh:
         return None, None, conf_thresh, None, None
+    phtm = None
     if compute_photometric:
         txx, tyy = int(tx0), int(ty0)
         bb0 = (txx, tyy, img0_g.shape[1]+txx, img0_g.shape[0]+tyy)

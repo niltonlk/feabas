@@ -2202,9 +2202,9 @@ class Mesh:
         v0 = xy - tri_pt[:,0,:]
         v1 = xy - tri_pt[:,1,:]
         v2 = xy - tri_pt[:,2,:]
-        a0 = np.cross(v1,v2)
-        a1 = np.cross(v2,v0)
-        a2 = np.cross(v0,v1)
+        a0 = v1[:,0] * v2[:,1] - v1[:,1] * v2[:,0]
+        a1 = v2[:,0] * v0[:,1] - v2[:,1] * v0[:,0]
+        a2 = v0[:,0] * v1[:,1] - v0[:,1] * v1[:,0]
         ac = a0 + a1 + a2
         b0 = a0 / ac
         b1 = a1 / ac

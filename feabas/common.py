@@ -673,7 +673,7 @@ def signed_area(vertices, triangles) -> np.ndarray:
     tripts = vertices[triangles]
     v0 = tripts[:,1,:] - tripts[:,0,:]
     v1 = tripts[:,2,:] - tripts[:,1,:]
-    return np.cross(v0, v1)
+    return v0[:, 0] * v1[:, 1] - v0[:, 1] * v1[:, 0]
 
 
 def expand_image(img, target_size, slices, fillval=0):
